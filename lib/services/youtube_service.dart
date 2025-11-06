@@ -32,26 +32,11 @@ class YouTubeService {
       final video = await _yt.videos.get(videoId);
       final streamManifest = await _yt.videos.streamsClient.getManifest(videoId);
       
-      // Get chapters
-      List<Chapter> chapters = [];
-      if (video.engagement.chapters.isNotEmpty) {
-        for (int i = 0; i < video.engagement.chapters.length; i++) {
-          final chapter = video.engagement.chapters[i];
-          final nextChapter = i < video.engagement.chapters.length - 1
-              ? video.engagement.chapters[i + 1]
-              : null;
-          
-          final duration = nextChapter != null
-              ? nextChapter.offset - chapter.offset
-              : video.duration! - chapter.offset;
-          
-          chapters.add(Chapter(
-            title: chapter.title,
-            startTime: chapter.offset,
-            duration: duration,
-          ));
-        }
-      }
+      // Get chapters from description
+      List<Chapter> chapters = _extractChaptersFromDescription(
+        video.description,
+        video.duration ?? Duration.zero,
+      );
 
       // Get best thumbnail URL
       String thumbnailUrl = video.thumbnails.highResUrl;
@@ -116,6 +101,72 @@ class YouTubeService {
     } catch (e) {
       throw Exception('Failed to download thumbnail: $e');
     }
+  }
+
+  /// Extract chapters from video description using timestamps
+  List<Chapter> _extractChaptersFromDescription(String description, Duration videoDuration) {
+    final List<Chapter> chapters = [];
+    final lines = description.split('\n');
+    
+    // Regex to match timestamps like "0:00", "1:23", "12:34:56"
+    final timestampRegex = RegExp(r'(\d{1,2}):(\d{2})(?::(\d{2}))?');
+    
+    for (final line in lines) {
+      final match = timestampRegex.firstMatch(line);
+      if (match != null) {
+        // Extract timestamp
+        final hours = match.group(3) != null ? int.parse(match.group(1)!) : 0;
+        final minutes = match.group(3) != null ? int.parse(match.group(2)!) : int.parse(match.group(1)!);
+        final seconds = match.group(3) != null ? int.parse(match.group(3)!) : int.parse(match.group(2)!);
+        
+        final startTime = Duration(
+          hours: hours,
+          minutes: minutes,
+          seconds: seconds,
+        );
+
+        // Extract title (everything after the timestamp)
+        var title = line.substring(match.end).trim();
+        
+        // Remove common prefixes and clean up
+        title = title.replaceAll(RegExp(r'^[-–—\s]+'), '');
+        title = title.trim();
+        
+        if (title.isNotEmpty) {
+          chapters.add(Chapter(
+            title: title,
+            startTime: startTime,
+          ));
+        }
+      }
+    }
+
+    // If no chapters found, return empty list
+    if (chapters.isEmpty) {
+      return [];
+    }
+
+    // Sort chapters by start time
+    chapters.sort((a, b) => a.startTime.compareTo(b.startTime));
+
+    // Calculate duration for each chapter
+    final List<Chapter> chaptersWithDuration = [];
+    for (int i = 0; i < chapters.length; i++) {
+      final chapter = chapters[i];
+      final nextChapter = i < chapters.length - 1 ? chapters[i + 1] : null;
+      
+      final duration = nextChapter != null
+          ? nextChapter.startTime - chapter.startTime
+          : videoDuration - chapter.startTime;
+
+      chaptersWithDuration.add(Chapter(
+        title: chapter.title,
+        startTime: chapter.startTime,
+        duration: duration,
+      ));
+    }
+
+    return chaptersWithDuration;
   }
 
   void dispose() {
