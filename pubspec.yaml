@@ -39,8 +39,8 @@ dependencies:
   # YouTube
   youtube_explode_dart: ^2.5.3
   
-  # FFmpeg
-  ffmpeg_kit_flutter_audio: ^6.0.3
+  # FFmpeg (using maintained fork)
+  ffmpeg_kit_flutter_new: ^4.1.0
   
   # File management
   path_provider: ^2.1.1
