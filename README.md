@@ -41,7 +41,7 @@ Download YouTube videos and automatically split them into MP3 tracks based on ch
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/youtube-chapter-splitter-android.git
+git clone https://github.com/all3f0r1/youtube-chapter-splitter-android.git
 cd youtube-chapter-splitter-android
 
 # Install dependencies
