@@ -105,7 +105,7 @@ class YouTubeService {
 
   /// Extract chapters from video description using timestamps
   List<Chapter> _extractChaptersFromDescription(String description, Duration videoDuration) {
-    final List<Chapter> chapters = [];
+    final List<Map<String, dynamic>> tempChapters = [];
     final lines = description.split('\n');
     
     // Regex to match timestamps like "0:00", "1:23", "12:34:56"
@@ -133,40 +133,43 @@ class YouTubeService {
         title = title.trim();
         
         if (title.isNotEmpty) {
-          chapters.add(Chapter(
-            title: title,
-            startTime: startTime,
-          ));
+          tempChapters.add({
+            'title': title,
+            'startTime': startTime,
+          });
         }
       }
     }
 
     // If no chapters found, return empty list
-    if (chapters.isEmpty) {
+    if (tempChapters.isEmpty) {
       return [];
     }
 
     // Sort chapters by start time
-    chapters.sort((a, b) => a.startTime.compareTo(b.startTime));
+    tempChapters.sort((a, b) => (a['startTime'] as Duration).compareTo(b['startTime'] as Duration));
 
-    // Calculate duration for each chapter
-    final List<Chapter> chaptersWithDuration = [];
-    for (int i = 0; i < chapters.length; i++) {
-      final chapter = chapters[i];
-      final nextChapter = i < chapters.length - 1 ? chapters[i + 1] : null;
+    // Calculate duration for each chapter and create Chapter objects
+    final List<Chapter> chapters = [];
+    for (int i = 0; i < tempChapters.length; i++) {
+      final tempChapter = tempChapters[i];
+      final nextTempChapter = i < tempChapters.length - 1 ? tempChapters[i + 1] : null;
       
-      final duration = nextChapter != null
-          ? nextChapter.startTime - chapter.startTime
-          : videoDuration - chapter.startTime;
+      final startTime = tempChapter['startTime'] as Duration;
+      final nextStartTime = nextTempChapter != null ? nextTempChapter['startTime'] as Duration : null;
+      
+      final duration = nextStartTime != null
+          ? nextStartTime - startTime
+          : videoDuration - startTime;
 
-      chaptersWithDuration.add(Chapter(
-        title: chapter.title,
-        startTime: chapter.startTime,
+      chapters.add(Chapter(
+        title: tempChapter['title'] as String,
+        startTime: startTime,
         duration: duration,
       ));
     }
 
-    return chaptersWithDuration;
+    return chapters;
   }
 
   void dispose() {
