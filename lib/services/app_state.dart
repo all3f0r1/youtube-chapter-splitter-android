@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 import '../models/video_info.dart';
 import 'youtube_service.dart';
@@ -158,24 +157,9 @@ class AppState extends ChangeNotifier {
   }
 
   Future<bool> _requestPermissions() async {
-    if (Platform.isAndroid) {
-      if (await Permission.storage.isGranted) {
-        return true;
-      }
-      
-      final status = await Permission.storage.request();
-      if (status.isGranted) {
-        return true;
-      }
-
-      // For Android 13+, try media permissions
-      if (await Permission.audio.isGranted) {
-        return true;
-      }
-      
-      final mediaStatus = await Permission.audio.request();
-      return mediaStatus.isGranted;
-    }
+    // For Android 10+ (API 29+), scoped storage is used automatically
+    // No explicit permissions needed for app-specific directories
+    // We'll use the Downloads directory which is accessible
     return true;
   }
 

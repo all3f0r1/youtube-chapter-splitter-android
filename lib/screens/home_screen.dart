@@ -22,9 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     if (widget.initialUrl != null) {
       _urlController.text = widget.initialUrl!;
-      // Process URL after build
+      // Process URL and start download automatically after build
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _processUrl();
+        _processUrlAndDownload();
       });
     }
   }
@@ -38,6 +38,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _processUrl() async {
     final appState = context.read<AppState>();
     await appState.processUrl(_urlController.text);
+  }
+
+  Future<void> _processUrlAndDownload() async {
+    final appState = context.read<AppState>();
+    await appState.processUrl(_urlController.text);
+    // If video info was fetched successfully, start download automatically
+    if (appState.videoInfo != null && appState.state == ProcessState.fetchingInfo) {
+      await appState.downloadAndSplit();
+    }
   }
 
   Future<void> _pasteFromClipboard() async {
@@ -113,8 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     appState.state == ProcessState.error
                                 ? _processUrl
                                 : null,
-                            icon: const Icon(Icons.search),
-                            label: const Text('Get Video Info'),
+                            icon: const Icon(Icons.album),
+                            label: const Text('Get Album'),
                           ),
                         ],
                       ),

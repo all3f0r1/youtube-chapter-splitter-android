@@ -49,8 +49,9 @@ class _MyAppState extends State<MyApp> {
         title: 'YouTube Chapter Splitter',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF251f5d)),
           useMaterial3: true,
+          primaryColor: const Color(0xFF251f5d),
         ),
         home: HomeScreen(initialUrl: _sharedUrl),
       ),
