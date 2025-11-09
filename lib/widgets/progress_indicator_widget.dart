@@ -4,8 +4,7 @@ import '../services/app_state.dart';
 class ProgressIndicatorWidget extends StatelessWidget {
   final AppState appState;
 
-  const ProgressIndicatorWidget({Key? key, required this.appState})
-      : super(key: key);
+  const ProgressIndicatorWidget({super.key, required this.appState});
 
   @override
   Widget build(BuildContext context) {

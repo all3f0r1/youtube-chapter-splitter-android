@@ -4,7 +4,7 @@ import '../models/video_info.dart';
 class VideoInfoCard extends StatelessWidget {
   final VideoInfo videoInfo;
 
-  const VideoInfoCard({Key? key, required this.videoInfo}) : super(key: key);
+  const VideoInfoCard({super.key, required this.videoInfo});
 
   @override
   Widget build(BuildContext context) {

@@ -8,7 +8,7 @@ import '../widgets/progress_indicator_widget.dart';
 class HomeScreen extends StatefulWidget {
   final String? initialUrl;
 
-  const HomeScreen({Key? key, this.initialUrl}) : super(key: key);
+  const HomeScreen({super.key, this.initialUrl});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

@@ -30,7 +30,7 @@ class YouTubeService {
   Future<models.VideoInfo> getVideoInfo(String videoId) async {
     try {
       final video = await _yt.videos.get(videoId);
-      final streamManifest = await _yt.videos.streamsClient.getManifest(videoId);
+      // final streamManifest = await _yt.videos.streamsClient.getManifest(videoId);
       
       // Get chapters from description
       List<Chapter> chapters = _extractChaptersFromDescription(
