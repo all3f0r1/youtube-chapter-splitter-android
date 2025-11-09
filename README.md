@@ -25,7 +25,7 @@ Download YouTube videos and automatically split them into MP3 tracks based on ch
 
 ### Option 1: Download APK from Releases
 
-1. Go to the [Releases page](https://github.com/YOUR_USERNAME/youtube-chapter-splitter-android/releases)
+1. Go to the [Releases page](https://github.com/all3f0r1/youtube-chapter-splitter-android/releases)
 2. Download the latest `app-release.apk`
 3. Install on your Android device (you may need to enable "Install from Unknown Sources")
 
@@ -33,7 +33,7 @@ Download YouTube videos and automatically split them into MP3 tracks based on ch
 
 #### Prerequisites
 
-- Flutter SDK (3.24.5 or later)
+- Flutter SDK (3.35.5 or later)
 - Android SDK (API 21+)
 - Android Studio or VS Code with Flutter extension
 
